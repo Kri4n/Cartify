@@ -10,7 +10,7 @@ import "@/app/globals.css";
 import "notyf/notyf.min.css";
 
 export const metadata: Metadata = {
-  title: "My App",
+  title: "Cartify",
   description: "Migrated from CRA to Next.js App Router",
 };
 

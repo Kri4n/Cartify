@@ -4,7 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
-import UserContext from "../context/UserContext";
+import UserContext, { useUserContext } from "../context/UserContext";
 
 import { useContext, useEffect, useState } from "react";
 
@@ -23,7 +23,7 @@ import { MdDashboard } from "react-icons/md";
 import Link from "next/link";
 
 function NavScrollExample() {
-  const { user } = useContext(UserContext);
+  const { user } = useUserContext();
 
   const [mounted, setMounted] = useState(false);
 

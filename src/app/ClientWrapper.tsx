@@ -25,6 +25,7 @@ export default function ClientWrapper({
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log("User details:", data);
         if (data) {
           setUser({ id: data._id, isAdmin: data.isAdmin });
         } else {

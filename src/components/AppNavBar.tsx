@@ -1,10 +1,11 @@
 "use client";
+
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
-import UserContext, { useUserContext } from "../context/UserContext";
+import { useUserContext } from "../context/UserContext";
 
 import { useContext, useEffect, useState } from "react";
 
@@ -45,7 +46,7 @@ function NavScrollExample() {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto ms-auto my-2 my-lg-0" navbarScroll>
-            {user.id !== null ? (
+            {user.id ? (
               user.isAdmin ? (
                 <>
                   <Nav.Link
@@ -158,7 +159,7 @@ function NavScrollExample() {
                   as={Link}
                   href="/register"
                 >
-                  <FaSignInAlt className="me-2" /> SIGN UP
+                  <FaSignInAlt className="me-2" /> REGISTER
                 </Nav.Link>
               </>
             )}

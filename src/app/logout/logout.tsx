@@ -3,7 +3,7 @@
 import { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 
-import UserContext, { useUserContext } from "../context/UserContext";
+import UserContext, { useUserContext } from "../../context/UserContext";
 
 export default function Logout() {
   const { setUser, unsetUser } = useUserContext();

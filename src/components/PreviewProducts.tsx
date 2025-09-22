@@ -35,7 +35,7 @@ export default function PreviewProducts(props: { data: any }) {
         <Card.Footer>
           <Link
             href={`/products/${_id}`}
-            className="text-decoration-none text-dark btn btn-light"
+            className="text-decoration-none text-dark"
           >
             More Details
           </Link>

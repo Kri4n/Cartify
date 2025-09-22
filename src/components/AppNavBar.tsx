@@ -41,7 +41,7 @@ function NavScrollExample() {
     <Navbar expand="lg" className="bg-light">
       <Container>
         <Navbar.Brand as={Link} href="/">
-          Cartify
+          <h3 className="ps-3">Cartify</h3>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">

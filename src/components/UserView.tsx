@@ -1,6 +1,6 @@
 import { JSX, useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Spinner } from "react-bootstrap";
 import { Product } from "@/types/product";
 import { useRouter } from "next/navigation";
 
@@ -12,6 +12,7 @@ export default function UserView({ productsData }: UserViewProps) {
   const router = useRouter();
 
   const [products, setProducts] = useState<(JSX.Element | null)[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -71,7 +72,13 @@ export default function UserView({ productsData }: UserViewProps) {
         </Form>
       </div>
       <div className="container m-5">
-        <div className="row g-1">{products}</div>
+        {loading ? (
+          <div className="d-flex justify-content-center my-5">
+            <Spinner animation="border" role="status" />
+          </div>
+        ) : (
+          <div className="row g-1">{products}</div>
+        )}
       </div>
     </>
   );

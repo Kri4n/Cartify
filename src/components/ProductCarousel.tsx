@@ -2,9 +2,6 @@
 
 import Image from "next/image";
 import Carousel from "react-bootstrap/Carousel";
-import FirstImage from "../assets/images/bag.jpg";
-import SecondImage from "../assets/images/tshirt.jpg";
-import ThirdImage from "../assets/images/watch.jpg";
 
 function ProductCarousel() {
   return (
@@ -14,8 +11,10 @@ function ProductCarousel() {
         <Carousel.Item>
           <Image
             className="carousel-image Image-fluid"
-            src={FirstImage}
+            src="/bag.jpg"
             alt="First slide"
+            width={500}
+            height={500}
           />
           <Carousel.Caption>
             <h3>Lorem</h3>
@@ -25,8 +24,10 @@ function ProductCarousel() {
         <Carousel.Item>
           <Image
             className="carousel-image Image-fluid"
-            src={SecondImage}
+            src="/tshirt.jpg"
             alt="Second slide"
+            width={500}
+            height={500}
           />
           <Carousel.Caption>
             <h3>Lorem</h3>
@@ -36,8 +37,10 @@ function ProductCarousel() {
         <Carousel.Item>
           <Image
             className="carousel-image Image-fluid"
-            src={ThirdImage}
+            src="/watch.jpg"
             alt="Third slide"
+            width={500}
+            height={500}
           />
           <Carousel.Caption>
             <h3>Lorem</h3>

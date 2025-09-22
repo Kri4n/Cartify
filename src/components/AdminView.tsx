@@ -5,9 +5,11 @@ import { Button, ButtonGroup, Table, Modal, Form } from "react-bootstrap";
 import EditProduct from "./EditProduct";
 import { Notyf } from "notyf";
 import ActivateProduct from "./ActivateProduct";
-import UserContext, { useUserContext } from "../context/UserContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
 
 type Product = {
   _id: string;
@@ -23,7 +25,9 @@ type AdminViewProps = {
 };
 
 export default function AdminView({ productsData, fetchData }: AdminViewProps) {
-  const { user } = useUserContext();
+  useUser(); // Auto-fetch user
+
+  const user = useSelector((state: RootState) => state.user);
 
   const router = useRouter();
 

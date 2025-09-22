@@ -2,12 +2,16 @@
 
 import AdminView from "@/components/AdminView";
 import UserView from "@/components/UserView";
+import { useUser } from "@/hooks/useUser";
+import { RootState } from "@/lib/store";
 import { useEffect, useState } from "react";
-import { useUserContext } from "../../context/UserContext";
 import { Spinner } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 export default function Products() {
-  const { user } = useUserContext();
+  useUser(); // Auto-fetch user
+
+  const user = useSelector((state: RootState) => state.user);
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);

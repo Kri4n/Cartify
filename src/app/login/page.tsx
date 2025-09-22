@@ -3,9 +3,11 @@
 import { useState, useEffect, useContext, FormEvent } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Notyf } from "notyf";
-
-import { useUserContext } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+import { setUser } from "@/redux/features/userSlice";
 
 export default function Login() {
   const notyf = new Notyf();
@@ -14,7 +16,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isActive, setIsActive] = useState(true);
 
-  const { user, setUser } = useUserContext();
+  useUser(); // Auto-fetch user
+
+  const user = useSelector((state: RootState) => state.user);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -54,6 +58,7 @@ export default function Login() {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log("User details:", data);
         setUser({ id: data._id, isAdmin: data.isAdmin });
         setIsLoggedIn(true);
         router.push("/products");

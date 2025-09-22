@@ -4,10 +4,10 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-
-import { useUserContext } from "../context/UserContext";
-
 import { useContext, useEffect, useState } from "react";
+import { AppDispatch } from "@/lib/store";
+import { useRouter } from "next/navigation";
+import { unsetUser } from "@/redux/features/userSlice";
 
 // Import icons
 import {
@@ -22,20 +22,21 @@ import {
 } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import Link from "next/link";
+import { useUser } from "@/hooks/useUser";
+import { RootState } from "@/lib/store";
+import { useDispatch, useSelector } from "react-redux";
 
 function NavScrollExample() {
-  const { user } = useUserContext();
+  useUser(); // Auto-fetch user
 
-  const [mounted, setMounted] = useState(false);
+  const user = useSelector((state: RootState) => state.user);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
   useEffect(() => {
-    setMounted(true);
+    console.log("User JSON:", JSON.stringify(user, null, 2));
   }, []);
-
-  if (!mounted) {
-    // Prevent mismatch: render nothing until client hydrates
-    return null;
-  }
 
   return (
     <Navbar expand="lg" className="bg-light">
@@ -115,8 +116,11 @@ function NavScrollExample() {
                       <FaUser className="me-2" /> My Profile
                     </NavDropdown.Item>
                     <NavDropdown.Item
-                      as={Link}
-                      href="/logout"
+                      onClick={() => {
+                        localStorage.clear();
+                        dispatch(unsetUser());
+                        router.push("/login");
+                      }}
                       className="d-flex align-items-center"
                     >
                       <FaSignOutAlt className="me-2" /> Logout

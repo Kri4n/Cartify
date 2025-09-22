@@ -3,12 +3,15 @@
 import { useState, useEffect, FormEvent } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Notyf } from "notyf";
-import { useUserContext } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
+import { RootState } from "@/lib/store";
+import { useSelector } from "react-redux";
 
 export default function Register() {
   const notyf = new Notyf();
-  const { user } = useUserContext();
+  useUser(); // Auto-fetch user
+  const user = useSelector((state: RootState) => state.user);
   const router = useRouter();
 
   // State hooks to store the values of the input fields

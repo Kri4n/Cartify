@@ -4,10 +4,8 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { useContext, useEffect, useState } from "react";
-import { AppDispatch } from "@/lib/store";
+import { AppDispatch } from "@/redux/store";
 import { useRouter } from "next/navigation";
-import { unsetUser } from "@/redux/features/userSlice";
 
 // Import icons
 import {
@@ -22,21 +20,20 @@ import {
 } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import Link from "next/link";
-import { useUser } from "@/hooks/useUser";
-import { RootState } from "@/lib/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useUserDetails } from "@/hooks/useUserDetails";
+import { clearAuth } from "@/redux/authSlice";
+import { useDispatch } from "react-redux";
 
 function NavScrollExample() {
-  useUser(); // Auto-fetch user
-
-  const user = useSelector((state: RootState) => state.user);
+  const router = useRouter();
+  const { user, loading, error } = useUserDetails();
 
   const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter();
 
-  useEffect(() => {
-    console.log("User JSON:", JSON.stringify(user, null, 2));
-  }, []);
+  function handleLogout() {
+    dispatch(clearAuth());
+    router.push("/login");
+  }
 
   return (
     <Navbar expand="lg" className="bg-light">
@@ -47,7 +44,7 @@ function NavScrollExample() {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto ms-auto my-2 my-lg-0" navbarScroll>
-            {user.id ? (
+            {user ? (
               user.isAdmin ? (
                 <>
                   <Nav.Link
@@ -58,9 +55,9 @@ function NavScrollExample() {
                     <MdDashboard className="me-2" /> DASHBOARD
                   </Nav.Link>
                   <Nav.Link
-                    className="fw-bold d-flex align-items-center"
-                    as={Link}
-                    href="/logout"
+                    as="button"
+                    className="fw-bold d-flex align-items-center btn btn-link p-0 text-decoration-none"
+                    onClick={handleLogout}
                   >
                     <FaSignOutAlt className="me-2" /> LOGOUT
                   </Nav.Link>
@@ -116,11 +113,7 @@ function NavScrollExample() {
                       <FaUser className="me-2" /> My Profile
                     </NavDropdown.Item>
                     <NavDropdown.Item
-                      onClick={() => {
-                        localStorage.clear();
-                        dispatch(unsetUser());
-                        router.push("/login");
-                      }}
+                      onClick={handleLogout}
                       className="d-flex align-items-center"
                     >
                       <FaSignOutAlt className="me-2" /> Logout

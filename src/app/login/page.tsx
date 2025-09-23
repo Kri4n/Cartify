@@ -2,67 +2,36 @@
 
 import { useState, useEffect, useContext, FormEvent } from "react";
 import { Form, Button } from "react-bootstrap";
-import { Notyf } from "notyf";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/hooks/useUser";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
-import { setUser } from "@/redux/features/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { setToken } from "@/redux/authSlice";
 
 export default function Login() {
-  const notyf = new Notyf();
-
+  const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isActive, setIsActive] = useState(true);
-
-  useUser(); // Auto-fetch user
-
-  const user = useSelector((state: RootState) => state.user);
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const router = useRouter();
 
-  function authenticate(e: FormEvent<HTMLFormElement>) {
+  async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.access !== undefined) {
-          localStorage.setItem("token", data.access);
-          retrieveUserDetails(data.access);
-          setEmail("");
-          setPassword("");
-          notyf.success("Successfully Logged in");
-        } else if (data.message === "Incorrect email or password") {
-          notyf.error("Incorrect Credentials. Try again.");
-        } else {
-          notyf.error("User Not Found. Try Again");
-        }
-      });
-  }
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, password: password }),
+      }
+    );
 
-  function retrieveUserDetails(token: any) {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/details`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("User details:", data);
-        setUser({ id: data._id, isAdmin: data.isAdmin });
-        setIsLoggedIn(true);
-        router.push("/products");
-      });
+    const data = await res.json();
+
+    if (res.ok) {
+      dispatch(setToken(data.access));
+      router.push("/products");
+    }
   }
 
   useEffect(() => {
@@ -73,16 +42,10 @@ export default function Login() {
     }
   }, [email, password]);
 
-  useEffect(() => {
-    if (isLoggedIn || user?.id) {
-      router.push("/products");
-    }
-  }, [isLoggedIn, user?.id, router]);
-
   return (
     <div className="border rounded p-3 shadow mt-5 mb-5 d-flex justify-content-center">
       <div className="w-50 my-3">
-        <Form onSubmit={(e) => authenticate(e)}>
+        <Form onSubmit={(e) => handleLogin(e)}>
           <h2 className="p-5 text-center">Login</h2>
           <div className="d-flex flex-column p-3">
             <Form.Group>

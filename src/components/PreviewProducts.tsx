@@ -1,11 +1,10 @@
 "use client";
 
-import { Badge, Box, Card, HStack, Image } from "@chakra-ui/react";
+import { Card, Badge, Button } from "react-bootstrap";
 import Link from "next/link";
 
 export default function PreviewProducts(props: { data: any }) {
   const { data } = props;
-
   const { _id, name, price } = data;
 
   const truncateText = (text: string, maxLength: number) => {
@@ -13,34 +12,33 @@ export default function PreviewProducts(props: { data: any }) {
   };
 
   return (
-    <Card.Root
-      className="cardroot"
-      flexDirection="row"
-      overflow="hidden"
-      maxW="xl"
-    >
-      <Image
-        objectFit="cover"
-        maxW="120px"
-        src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
+    <Card className="overflow-hidden" style={{ maxWidth: "20rem" }}>
+      {/* Image on top */}
+      <Card.Img
+        variant="top"
+        src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?auto=format&fit=crop&w=800&q=60"
         alt="Caffe Latte"
+        style={{ height: "160px", objectFit: "cover" }}
       />
-      <Box>
-        <Card.Body>
-          <Card.Title mb="2">{truncateText(name, 20)}</Card.Title>
-          <HStack mt="4">
-            <Badge className="lead">PHP {price}</Badge>
-          </HStack>
-        </Card.Body>
-        <Card.Footer>
-          <Link
-            href={`/products/${_id}`}
-            className="text-decoration-none text-dark"
-          >
-            More Details
-          </Link>
-        </Card.Footer>
-      </Box>
-    </Card.Root>
+
+      {/* Body below the image */}
+      <Card.Body>
+        <Card.Title>{truncateText(name, 30)}</Card.Title>
+        <Badge bg="secondary" className="mb-2">
+          PHP {price}
+        </Badge>
+      </Card.Body>
+
+      {/* Footer below body */}
+      <Card.Footer className="bg-transparent border-0">
+        <Button
+          href={`/products/${_id}`}
+          className="text-decoration-none text-white"
+          variant="dark"
+        >
+          More Details
+        </Button>
+      </Card.Footer>
+    </Card>
   );
 }

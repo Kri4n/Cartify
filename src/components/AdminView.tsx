@@ -7,9 +7,9 @@ import { Notyf } from "notyf";
 import ActivateProduct from "./ActivateProduct";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/hooks/useUser";
 import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
+import { RootState } from "@/redux/store";
+import { useUserDetails } from "@/hooks/useUserDetails";
 
 type Product = {
   _id: string;
@@ -25,9 +25,7 @@ type AdminViewProps = {
 };
 
 export default function AdminView({ productsData, fetchData }: AdminViewProps) {
-  useUser(); // Auto-fetch user
-
-  const user = useSelector((state: RootState) => state.user);
+  const { user, loading, error } = useUserDetails();
 
   const router = useRouter();
 
@@ -109,12 +107,12 @@ export default function AdminView({ productsData, fetchData }: AdminViewProps) {
       });
   }
 
-  if (!user.isAdmin) {
+  if (!user?.isAdmin) {
     router.push("/"); // redirect to homepage
     return null; // prevent rendering anything else
   }
 
-  return user.isAdmin === true ? (
+  return user?.isAdmin === true ? (
     <>
       <h2 className="text-center pt-4">Admin Dashboard</h2>
 

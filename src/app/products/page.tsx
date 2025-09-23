@@ -2,25 +2,21 @@
 
 import AdminView from "@/components/AdminView";
 import UserView from "@/components/UserView";
-import { useUser } from "@/hooks/useUser";
-import { RootState } from "@/lib/store";
+import { useUserDetails } from "@/hooks/useUserDetails";
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 export default function Products() {
-  useUser(); // Auto-fetch user
-
-  const user = useSelector((state: RootState) => state.user);
-
+  const { user, loading, error } = useUserDetails();
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   const fetchData = () => {
-    setLoading(true);
+    setLoadingProducts(true);
 
     let fetchUrl =
-      user.isAdmin === true
+      user?.isAdmin === true
         ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/all`
         : `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/active`;
 
@@ -34,7 +30,7 @@ export default function Products() {
         setProducts(data);
       })
       .catch((err) => console.error("Error fetching products:", err))
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingProducts(false));
   };
 
   useEffect(() => {
@@ -51,7 +47,7 @@ export default function Products() {
     );
   }
 
-  return user.isAdmin === true ? (
+  return user?.isAdmin === true ? (
     <AdminView productsData={products} fetchData={fetchData} />
   ) : (
     <UserView productsData={products} />

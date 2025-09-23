@@ -4,15 +4,15 @@ import { useState, useEffect, FormEvent } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Notyf } from "notyf";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/hooks/useUser";
-import { RootState } from "@/lib/store";
+import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import { useUserDetails } from "@/hooks/useUserDetails";
 
 export default function Register() {
   const notyf = new Notyf();
-  useUser(); // Auto-fetch user
-  const user = useSelector((state: RootState) => state.user);
   const router = useRouter();
+
+  const { user, loading, error } = useUserDetails();
 
   // State hooks to store the values of the input fields
   const [firstName, setFirstName] = useState("");
@@ -80,12 +80,6 @@ export default function Register() {
         notyf.error("Something went wrong");
       });
   }
-
-  useEffect(() => {
-    if (user.id) {
-      router.push("/products");
-    }
-  }, [user?.id, router]);
 
   return (
     <Form onSubmit={(e) => registerUser(e)} className="container my-5">

@@ -71,13 +71,15 @@ export default function UserView({ productsData }: UserViewProps) {
           </Button>
         </Form>
       </div>
-      <div className="container m-5">
+      <div>
         {loading ? (
-          <div className="d-flex justify-content-center my-5">
+          <div className="d-flex justify-content-center mx-auto my-auto">
             <Spinner animation="border" role="status" />
           </div>
         ) : (
-          <div className="row g-1">{products}</div>
+          <div className="ms-5 ps-3 my-5">
+            <div className="row g-1">{products}</div>
+          </div>
         )}
       </div>
     </>

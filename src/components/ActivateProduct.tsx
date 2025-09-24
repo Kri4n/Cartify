@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { Notyf } from "notyf";
+import axios from "axios";
 
 type Product = {
   _id: string;
@@ -27,10 +28,9 @@ export default function ActivateProduct({
 
   const activateProduct = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${productId}/activate`,
         {
-          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -38,11 +38,9 @@ export default function ActivateProduct({
         }
       );
 
-      if (response.ok) {
-        await response.json();
+      if (response.status == 200 || 201) {
         fetchData();
       } else {
-        await response.json();
         notyf.error("Error activating the product");
       }
     } catch (error) {
@@ -52,10 +50,9 @@ export default function ActivateProduct({
 
   const disableProduct = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${productId}/archive`,
         {
-          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -63,11 +60,9 @@ export default function ActivateProduct({
         }
       );
 
-      if (response.ok) {
-        await response.json();
+      if (response.status == 200 || 201) {
         fetchData();
       } else {
-        await response.json();
         notyf.error("Something went wrong");
       }
     } catch (error) {

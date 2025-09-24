@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { useUserDetails } from "@/hooks/useUserDetails";
+import axios from "axios";
 
 export default function Register() {
   const notyf = new Notyf();
@@ -41,44 +42,44 @@ export default function Register() {
     }
   }, [firstName, lastName, email, mobileNo, password, confirmPassword]);
 
-  function registerUser(e: FormEvent<HTMLFormElement>) {
+  async function registerUser(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        mobileNo: mobileNo,
-        password: password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.message === "User registered successfully") {
-          setFirstName("");
-          setLastName("");
-          setEmail("");
-          setMobileNo("");
-          setPassword("");
-          setConfirmPassword("");
-
-          notyf.success("Registration successful");
-
-          router.push("/login");
-        } else {
-          notyf.error(data.message || "Registration failed");
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/register`,
+        {
+          firstName,
+          lastName,
+          email,
+          mobileNo,
+          password,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
         }
-      })
-      .catch((err) => {
-        console.error(err);
-        notyf.error("Something went wrong");
-      });
+      );
+
+      const data = res.data;
+      console.log(data);
+
+      if (data.message === "User registered successfully") {
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setMobileNo("");
+        setPassword("");
+        setConfirmPassword("");
+
+        notyf.success("Registration successful");
+        router.push("/login");
+      } else {
+        notyf.error(data.message || "Registration failed");
+      }
+    } catch (err) {
+      console.error(err);
+      notyf.error("Something went wrong");
+    }
   }
 
   return (

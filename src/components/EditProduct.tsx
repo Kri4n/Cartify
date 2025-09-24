@@ -1,6 +1,7 @@
 import { Button, Modal, Form } from "react-bootstrap";
 import React, { useState } from "react";
 import { Notyf } from "notyf";
+import axios from "axios";
 
 type Product = {
   _id: string;
@@ -39,36 +40,38 @@ export default function EditProduct({
     setPrice(0);
   };
 
-  const editProduct = (e: React.FormEvent<HTMLFormElement>, productId: any) => {
+  const editProduct = async (
+    e: React.FormEvent<HTMLFormElement>,
+    productId: any
+  ) => {
     e.preventDefault();
 
-    fetch(
+    const res = await axios.patch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${productId}/update`,
       {
-        method: "PATCH",
+        name: name,
+        description: description,
+        price: price,
+      },
+      {
         headers: {
           "Content-Type": "Application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          name: name,
-          description: description,
-          price: price,
-        }),
       }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success === true) {
-          notyf.success("Successfully Updated");
-          closeEdit();
-          fetchData();
-        } else {
-          notyf.error("Something went wrong");
-          closeEdit();
-          fetchData();
-        }
-      });
+    );
+
+    const data = res.data;
+
+    if (data.success === true) {
+      notyf.success("Successfully Updated");
+      closeEdit();
+      fetchData();
+    } else {
+      notyf.error("Something went wrong");
+      closeEdit();
+      fetchData();
+    }
   };
 
   return (

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useUserDetails } from "@/hooks/useUserDetails";
+import axios from "axios";
 
 type Product = {
   _id: string;
@@ -71,40 +72,44 @@ export default function AdminView({ productsData, fetchData }: AdminViewProps) {
   const handleCloseCreateModal = () => setShowCreateModal(false);
 
   // Add New Course
-  function createProduct(e: FormEvent<HTMLFormElement>) {
+  async function createProduct(e: FormEvent<HTMLFormElement>) {
     //prevent submit event's default behavior
     e.preventDefault();
 
     let token = localStorage.getItem("token");
 
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/products/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_BASE_URL}/products/`,
+      {
         name: name,
         description: description,
         price: price,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          setName("");
-          setDescription("");
-          setPrice("");
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-          notyf.success("Product Added");
+    if (res.status == 200 || 201) {
+      const data = res.data;
 
-          handleCloseCreateModal();
+      if (data) {
+        setName("");
+        setDescription("");
+        setPrice("");
 
-          fetchData();
-        } else {
-          notyf.error("Error: Something Went Wrong.");
-        }
-      });
+        notyf.success("Product Added");
+
+        handleCloseCreateModal();
+
+        fetchData();
+      } else {
+        notyf.error("Error: Something Went Wrong.");
+      }
+    }
   }
 
   if (!user?.isAdmin) {

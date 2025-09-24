@@ -3,6 +3,7 @@
 import AdminView from "@/components/AdminView";
 import UserView from "@/components/UserView";
 import { useUserDetails } from "@/hooks/useUserDetails";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
@@ -12,25 +13,27 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setLoadingProducts(true);
 
-    let fetchUrl =
-      user?.isAdmin === true
-        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/all`
-        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/active`;
+    try {
+      const fetchUrl =
+        user?.isAdmin === true
+          ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/all`
+          : `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/active`;
 
-    fetch(fetchUrl, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-      })
-      .catch((err) => console.error("Error fetching products:", err))
-      .finally(() => setLoadingProducts(false));
+      const res = await axios.get(fetchUrl, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setProducts(res.data); //
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    } finally {
+      setLoadingProducts(false);
+    }
   };
 
   useEffect(() => {

@@ -3,6 +3,7 @@ import ProductCard from "./ProductCard";
 import { Form, Button, Spinner } from "react-bootstrap";
 import { Product } from "@/types/product";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface UserViewProps {
   productsData: Product[];
@@ -31,17 +32,17 @@ export default function UserView({ productsData }: UserViewProps) {
 
   const handleSearch = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/search-by-name`,
+        { name: searchQuery },
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name: searchQuery }),
         }
       );
-      const data = await response.json();
+      const data = response.data;
       setSearchResults(data);
 
       if (data) {

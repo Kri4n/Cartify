@@ -3,19 +3,21 @@
 import { useState, useEffect, JSX } from "react";
 import { CardGroup } from "react-bootstrap";
 import PreviewProducts from "./PreviewProducts";
+import axios from "axios";
 
 export default function FeaturedProducts() {
   const [previews, setPreviews] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/active`)
-      .then((res) => res.json())
-      .then((data) => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/active`)
+      .then((res) => {
+        const products = res.data;
         const numbers: (string | number)[] = [];
         const featured = [];
 
         const generateRandomNums = () => {
-          let randomNum = Math.floor(Math.random() * data.length);
+          let randomNum = Math.floor(Math.random() * products.length);
 
           if (numbers.indexOf(randomNum) === -1) {
             numbers.push(randomNum);
@@ -29,8 +31,8 @@ export default function FeaturedProducts() {
 
           featured.push(
             <PreviewProducts
-              data={data[numbers[i]]}
-              key={data[numbers[i]]._id}
+              data={products[numbers[i]]}
+              key={products[numbers[i]]._id}
             />
           );
         }

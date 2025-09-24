@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { setUser } from "../redux/authSlice";
+import axios from "axios";
 
 export function useUserDetails() {
   const token = useSelector((state: RootState) => state.auth.token);
@@ -22,7 +23,7 @@ export function useUserDetails() {
       setError(null);
 
       try {
-        const res = await fetch(
+        const res = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/details`,
           {
             headers: {
@@ -31,9 +32,10 @@ export function useUserDetails() {
           }
         );
 
-        if (!res.ok) throw new Error("Failed to fetch user");
+        const data = res.data;
 
-        const data = await res.json();
+        if (!data) throw new Error("Failed to fetch user");
+
         dispatch(setUser(data.user));
       } catch (err: any) {
         setError(err.message || "Something went wrong");

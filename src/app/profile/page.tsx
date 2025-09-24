@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { useUserDetails } from "@/hooks/useUserDetails";
+import axios from "axios";
 
 export default function Profile() {
   const { user, loading, error } = useUserDetails();
@@ -38,25 +39,24 @@ export default function Profile() {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
+      const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/update-password`,
+        { newPassword: password },
         {
-          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ newPassword: password }),
         }
       );
 
-      if (response.ok) {
+      if (response.status == 200) {
         notyf?.success("Password changed successfully");
         setPassword("");
         setConfirmPassword("");
         setShow(false);
       } else {
-        const errorData = await response.json();
+        const errorData = await response.data;
         setMessage(errorData.message);
       }
     } catch (error) {

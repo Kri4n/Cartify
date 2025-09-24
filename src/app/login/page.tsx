@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setToken } from "@/redux/authSlice";
+import axios from "axios";
 
 export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,18 +18,20 @@ export default function Login() {
   async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const res = await fetch(
+    const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/login`,
       {
-        method: "POST",
+        email: email,
+        password: password,
+      },
+      {
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, password: password }),
       }
     );
 
-    const data = await res.json();
+    const data = res.data;
 
-    if (res.ok) {
+    if (res.status === 200) {
       dispatch(setToken(data.access));
       router.push("/products");
     }

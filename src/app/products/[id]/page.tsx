@@ -72,7 +72,7 @@ export default function ProductView() {
               <Card.Text>{description}</Card.Text>
               <Card.Subtitle>Price:</Card.Subtitle>
               <Card.Text>PhP {price}</Card.Text>
-              {user?.id !== null ? (
+              {user ? (
                 <div className="d-flex justify-content-center gap-1">
                   <div className="d-flex align-items-center">
                     <Button

@@ -3,6 +3,7 @@
 import AdminView from "@/components/AdminView";
 import UserView from "@/components/UserView";
 import { useUserDetails } from "@/hooks/useUserDetails";
+import { RootState } from "@/redux/store";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
@@ -12,6 +13,7 @@ export default function Products() {
   const { user, loading, error } = useUserDetails();
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const fetchData = async () => {
     setLoadingProducts(true);
@@ -24,7 +26,7 @@ export default function Products() {
 
       const res = await axios.get(fetchUrl, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

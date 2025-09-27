@@ -2,6 +2,8 @@ import { Button, Modal, Form } from "react-bootstrap";
 import React, { useState } from "react";
 import { Notyf } from "notyf";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 type Product = {
   _id: string;
@@ -28,6 +30,7 @@ export default function EditProduct({
   const [description, setDescription] = useState(product.description);
   const [price, setPrice] = useState(product.price);
   const [showEdit, setShowEdit] = useState(false);
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const openEdit = () => {
     setShowEdit(true);
@@ -56,7 +59,7 @@ export default function EditProduct({
       {
         headers: {
           "Content-Type": "Application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );

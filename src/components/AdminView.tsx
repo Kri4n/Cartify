@@ -38,6 +38,7 @@ export default function AdminView({ productsData, fetchData }: AdminViewProps) {
 
   const [products, setProducts] = useState<JSX.Element[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const token = useSelector((state: RootState) => state.auth.token);
 
   // Generate rows for products table
   useEffect(() => {
@@ -76,10 +77,8 @@ export default function AdminView({ productsData, fetchData }: AdminViewProps) {
     //prevent submit event's default behavior
     e.preventDefault();
 
-    let token = localStorage.getItem("token");
-
     const res = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/products/`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/`,
       {
         name: name,
         description: description,

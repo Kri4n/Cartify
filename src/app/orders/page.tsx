@@ -1,5 +1,6 @@
 "use client";
 
+import { RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
 import {
   Container,
@@ -10,49 +11,38 @@ import {
   Modal,
   ListGroup,
 } from "react-bootstrap";
-import axios from "axios";
-import { useUserDetails } from "@/hooks/useUserDetails";
+import { useSelector } from "react-redux";
 
-// ---- Types ----
-interface ProductOrdered {
+interface Product {
   productId: string;
   quantity: number;
   subtotal: number;
-  name?: string; // filled after fetching product details
+  name?: string;
 }
 
 interface Order {
-  _id: string;
-  status: string;
-  totalPrice: number;
-  productsOrdered: ProductOrdered[];
+  _id: string; // from MongoDB style IDs
+  status: string; // e.g. "pending", "completed"
+  totalPrice: number; // order total
+  productsOrdered: Product[]; // items in the order
 }
 
-interface ProductDetails {
-  _id: string;
-  name: string;
-  price: number;
-  description?: string;
-}
-
-// ---- Component ----
-const Orders: React.FC = () => {
+const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading2, setLoading] = useState<boolean>(true);
-  const [error2, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const { user, loading, error } = useUserDetails();
+  const token = useSelector((state: RootState) => state.auth.token);
 
   // Function to fetch product details by productId
-  const fetchProductDetails = async (
-    productId: string
-  ): Promise<ProductDetails | null> => {
+  const fetchProductDetails = async (productId: string) => {
     try {
-      const response = await axios.get<ProductDetails>(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${productId}`
       );
-      return response.data; // axios already parses JSON
+      const productData = await response.json();
+      return productData; // Return product details (name, price, etc.)
     } catch (err) {
       console.error("Error fetching product details:", err);
       return null;
@@ -60,27 +50,22 @@ const Orders: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/orders/my-orders`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        const data = await res.json();
-
+    // Fetch the orders from the API
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/orders/my-orders`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(async (data) => {
         if (data.error) {
           setError(data.error);
         } else {
-          // For each order, fetch product details for each productId
-          const ordersWithProducts: Order[] = await Promise.all(
-            data.map(async (order: Order) => {
-              const productsWithNames: ProductOrdered[] = await Promise.all(
-                order.productsOrdered.map(async (product: ProductOrdered) => {
+          // For each order, fetch the product details for each productId
+          const ordersWithProducts = await Promise.all(
+            (data as Order[]).map(async (order) => {
+              const productsWithNames = await Promise.all(
+                order.productsOrdered.map(async (product) => {
                   const productDetails = await fetchProductDetails(
                     product.productId
                   );
@@ -92,24 +77,20 @@ const Orders: React.FC = () => {
                   };
                 })
               );
-
               return {
                 ...order,
                 productsOrdered: productsWithNames,
               };
             })
           );
-
           setOrders(ordersWithProducts);
         }
-      } catch (err) {
-        setError("Failed to load orders");
-      } finally {
         setLoading(false);
-      }
-    };
-
-    fetchOrders();
+      })
+      .catch((err) => {
+        setError("Failed to load orders");
+        setLoading(false);
+      });
   }, []);
 
   // Handle showing and hiding the modal
@@ -169,7 +150,7 @@ const Orders: React.FC = () => {
           <Modal.Body>
             <h5 className="text-center p-3">
               Status: {selectedOrder.status} | Total Price: ₱
-              {selectedOrder.totalPrice.toFixed(2)}
+              {selectedOrder.totalPrice}
             </h5>
             <ListGroup>
               {selectedOrder.productsOrdered.map((product, index) => (
@@ -194,6 +175,3 @@ const Orders: React.FC = () => {
 };
 
 export default Orders;
-function setError(error: any) {
-  throw new Error("Function not implemented.");
-}

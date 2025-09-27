@@ -24,6 +24,7 @@ export default function Profile() {
   const [message, setMessage] = useState("");
 
   const [notyf, setNotyf] = useState<Notyf | null>(null);
+  const token = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
     setNotyf(new Notyf());
@@ -38,7 +39,6 @@ export default function Profile() {
     }
 
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/update-password`,
         { newPassword: password },

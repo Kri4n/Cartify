@@ -6,6 +6,8 @@ import { Notyf } from "notyf";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useUserDetails } from "@/hooks/useUserDetails";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 export default function ProductView() {
   const [notyf, setNotyf] = useState<Notyf | null>(null);
@@ -16,6 +18,7 @@ export default function ProductView() {
   const [price, setPrice] = useState(0);
   const params = useParams();
   const productId = params.id;
+  const token = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
     setNotyf(new Notyf()); // init only on client
@@ -29,7 +32,7 @@ export default function ProductView() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         productId: productId,

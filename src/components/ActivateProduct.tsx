@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { Notyf } from "notyf";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 type Product = {
   _id: string;
@@ -25,6 +27,7 @@ export default function ActivateProduct({
   const [productId] = useState(product._id);
 
   const notyf = new Notyf();
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const activateProduct = async () => {
     try {
@@ -33,7 +36,7 @@ export default function ActivateProduct({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -55,7 +58,7 @@ export default function ActivateProduct({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );

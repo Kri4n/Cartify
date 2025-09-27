@@ -83,10 +83,9 @@ export default function Profile() {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleResetPassword}>
-            <Form.Group className="mb-3" controlId="changePassword">
+            <Form.Group className="mb-3" controlId="password">
               <Form.Label>New Password</Form.Label>
               <Form.Control
-                id="password"
                 type="password"
                 placeholder="Enter your new password"
                 value={password}
@@ -95,10 +94,9 @@ export default function Profile() {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="newPassword">
+            <Form.Group className="mb-3" controlId="confirmPassword">
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
-                id="confirmPassword"
                 type="password"
                 placeholder="Confirm your new password"
                 value={confirmPassword}

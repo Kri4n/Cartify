@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
 import {
@@ -106,7 +107,7 @@ const Orders = () => {
 
   // Render the component based on loading state or errors
   if (loading) {
-    return <div className="text-center h1">Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error) {

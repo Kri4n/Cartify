@@ -92,7 +92,7 @@ function NavScrollExample() {
                   >
                     <NavDropdown.Item
                       as={Link}
-                      href="cart"
+                      href="/cart"
                       className="d-flex align-items-center"
                     >
                       <FaShoppingCart className="me-2" /> Cart

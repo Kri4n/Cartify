@@ -9,12 +9,10 @@ import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [loadingCart, setLoadingCart] = useState(true);
   const notyf = new Notyf();
   const emptyCart = "https://cdn-icons-png.flaticon.com/512/11329/11329060.png";
   const { user, loading, error } = useUserDetails();
@@ -28,8 +26,6 @@ export default function Cart() {
   }, [user]);
 
   function fetchCartItems() {
-    setLoadingCart(true);
-
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/cart/get-cart`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -61,40 +57,50 @@ export default function Cart() {
             .catch(() => notyf.error("Failed to fetch product details."));
         }
       })
-      .catch(() => notyf.error("Failed to fetch cart items."))
-      .finally(() => {
-        setLoadingCart(false); // ✅ hide spinner after everything
-      });
+      .catch(() => notyf.error("Failed to fetch cart items."));
   }
 
   function updateQuantity(productId: string, newQuantity: number) {
-    const updatedItem = cartItems.find((item) => item.productId === productId);
-    if (updatedItem && updatedItem.price !== undefined) {
-      const updatedSubtotal = updatedItem.price * newQuantity; // Calculate new subtotal
-
-      fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/cart/update-cart-quantity`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            productId,
+    setCartItems((prevCartItems) =>
+      prevCartItems.map((item) => {
+        if (item.productId === productId && item.price !== undefined) {
+          return {
+            ...item,
             quantity: newQuantity,
-            subtotal: updatedSubtotal,
-          }),
+            subtotal: item.price * newQuantity, // update subtotal locally
+          };
         }
-      )
-        .then((res) => res.json())
-        .then(() => {
-          fetchCartItems();
-        })
-        .catch((error) => {
-          notyf.error("Failed to update quantity.");
-        });
-    }
+        return item;
+      })
+    );
+
+    // Recalculate total price locally
+    setTotalPrice((prevTotal) =>
+      cartItems.reduce((acc, item) => {
+        if (item.productId === productId && item.price !== undefined) {
+          return acc + item.price * newQuantity;
+        }
+        return acc + (item.subtotal ?? 0);
+      }, 0)
+    );
+
+    // Persist to backend
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/cart/update-cart-quantity`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        productId,
+        quantity: newQuantity,
+        subtotal:
+          cartItems.find((i) => i.productId === productId)?.price! *
+          newQuantity,
+      }),
+    }).catch(() => {
+      notyf.error("Failed to update quantity.");
+    });
   }
 
   function removeFromCart(productId: string) {
@@ -121,7 +127,7 @@ export default function Cart() {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/cart/clear-cart`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem(`token`)}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => res.json())
@@ -168,9 +174,7 @@ export default function Cart() {
     <div className="my-5">
       <h2 className="text-center mb-4 fw-bold">My Cart</h2>
 
-      {loadingCart ? (
-        <LoadingSpinner />
-      ) : cartItems.length === 0 ? (
+      {cartItems.length === 0 ? (
         <Alert variant="warning" className="text-center mt-5 p-5">
           <h3>Your cart is empty.</h3>
           <Link className="btn btn-dark my-2" href="/products">

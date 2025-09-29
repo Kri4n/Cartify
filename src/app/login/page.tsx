@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setToken } from "@/redux/authSlice";
 import axios from "axios";
+import { Notyf } from "notyf";
 
 export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,6 +15,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isActive, setIsActive] = useState(true);
   const router = useRouter();
+  const notyf = new Notyf();
 
   async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,6 +36,8 @@ export default function Login() {
     if (res.status === 200) {
       dispatch(setToken(data.access));
       router.push("/products");
+    } else {
+      notyf.error("User Not Found. Try Again");
     }
   }
 

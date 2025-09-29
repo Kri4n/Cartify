@@ -33,6 +33,7 @@ export default function ActivateProduct({
     try {
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${productId}/activate`,
+        {},
         {
           headers: {
             "Content-Type": "application/json",
@@ -55,6 +56,7 @@ export default function ActivateProduct({
     try {
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${productId}/archive`,
+        {},
         {
           headers: {
             "Content-Type": "application/json",

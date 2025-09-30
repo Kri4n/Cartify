@@ -3,7 +3,6 @@
 import { useState, useEffect, useContext, FormEvent, JSX } from "react";
 import { Button, ButtonGroup, Table, Modal, Form } from "react-bootstrap";
 import EditProduct from "./EditProduct";
-import { Notyf } from "notyf";
 import ActivateProduct from "./ActivateProduct";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -34,11 +33,16 @@ export default function AdminView({ productsData, fetchData }: AdminViewProps) {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
 
-  const notyf = new Notyf();
+  const [notyf, setNotyf] = useState<any>(null);
 
   const [products, setProducts] = useState<JSX.Element[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const token = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    const { Notyf } = require("notyf");
+    setNotyf(new Notyf());
+  }, []);
 
   // Generate rows for products table
   useEffect(() => {

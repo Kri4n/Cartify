@@ -15,7 +15,12 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isActive, setIsActive] = useState(true);
   const router = useRouter();
-  const notyf = new Notyf();
+  const [notyf, setNotyf] = useState<any>(null);
+
+  useEffect(() => {
+    const { Notyf } = require("notyf");
+    setNotyf(new Notyf());
+  }, []);
 
   async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();

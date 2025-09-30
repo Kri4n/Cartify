@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import { Notyf } from "notyf";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -26,8 +25,13 @@ export default function ActivateProduct({
 }: ActivateProductProps) {
   const [productId] = useState(product._id);
 
-  const notyf = new Notyf();
+  const [notyf, setNotyf] = useState<any>(null);
   const token = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    const { Notyf } = require("notyf");
+    setNotyf(new Notyf());
+  }, []);
 
   const activateProduct = async () => {
     try {

@@ -13,11 +13,16 @@ import Link from "next/link";
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const notyf = new Notyf();
+  const [notyf, setNotyf] = useState<any>(null);
   const emptyCart = "https://cdn-icons-png.flaticon.com/512/11329/11329060.png";
   const { user, loading, error } = useUserDetails();
   const token = useSelector((state: RootState) => state.auth.token);
   const router = useRouter();
+
+  useEffect(() => {
+    const { Notyf } = require("notyf"); // import inside useEffect so it's only on client
+    setNotyf(new Notyf());
+  }, []);
 
   useEffect(() => {
     if (user) {

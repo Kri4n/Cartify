@@ -2,7 +2,6 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { Form, Button } from "react-bootstrap";
-import { Notyf } from "notyf";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
@@ -10,10 +9,8 @@ import { useUserDetails } from "@/hooks/useUserDetails";
 import axios from "axios";
 
 export default function Register() {
-  const notyf = new Notyf();
+  const [notyf, setNotyf] = useState<any>(null);
   const router = useRouter();
-
-  const { user, loading, error } = useUserDetails();
 
   // State hooks to store the values of the input fields
   const [firstName, setFirstName] = useState("");
@@ -24,6 +21,11 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   // State to determine whether the submit button is enabled or not
   const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const { Notyf } = require("notyf");
+    setNotyf(new Notyf());
+  }, []);
 
   useEffect(() => {
     if (

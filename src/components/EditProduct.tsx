@@ -1,5 +1,5 @@
 import { Button, Modal, Form } from "react-bootstrap";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Notyf } from "notyf";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -23,7 +23,7 @@ export default function EditProduct({
   fetchData,
   buttonText,
 }: EditProductProps) {
-  const notyf = new Notyf();
+  const [notyf, setNotyf] = useState<any>(null);
 
   const [productId, setProductId] = useState(product._id);
   const [name, setName] = useState(product.name);
@@ -31,6 +31,11 @@ export default function EditProduct({
   const [price, setPrice] = useState(product.price);
   const [showEdit, setShowEdit] = useState(false);
   const token = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    const { Notyf } = require("notyf");
+    setNotyf(new Notyf());
+  }, []);
 
   const openEdit = () => {
     setShowEdit(true);

@@ -23,6 +23,7 @@ import Link from "next/link";
 import { useUserDetails } from "@/hooks/useUserDetails";
 import { clearAuth } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
+import Image from "next/image";
 
 function NavScrollExample() {
   const router = useRouter();
@@ -36,10 +37,15 @@ function NavScrollExample() {
   }
 
   return (
-    <Navbar expand="lg" className="bg-light">
+    <Navbar expand="lg" bg="dark" variant="dark">
       <Container>
         <Navbar.Brand as={Link} href="/">
-          <h3 className="ps-3">Cartify</h3>
+          <Image
+            src="/cartify-navbar-logo.png"
+            width={80}
+            height={60}
+            alt="cartify-logo"
+          />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">

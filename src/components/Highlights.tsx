@@ -1,15 +1,22 @@
 "use client";
 
 import { Row, Col, Card } from "react-bootstrap";
+import Image from "next/image";
 
 export default function Highlights() {
   return (
-    <Row className="my-3 d-flex flex-sm-column flex-md-row flex-lg-row flex-xl-row gap-sm-2 gap-md-0">
+    <Row className="my-3 d-flex flex-sm-column flex-md-row flex-lg-row flex-xl-row gap-sm-2 gap-2 gap-md-0">
       <Col xs={12} md={4}>
         <Card className="cardHighlight p-3 bg-dark text-white">
           <Card.Body>
-            <Card.Title>
-              <h2>30-Day Return Window</h2>
+            <Card.Title className="d-flex">
+              <Image
+                src="/30-day-return.png"
+                alt={"30-day-return"}
+                width={120}
+                height={100}
+              />
+              <h2>30-Days Return Window</h2>
             </Card.Title>
             <Card.Text>
               Customers can return products within 30 days of receiving their
@@ -23,7 +30,13 @@ export default function Highlights() {
       <Col xs={12} md={4}>
         <Card className="cardHighlight p-3 bg-dark text-white">
           <Card.Body>
-            <Card.Title>
+            <Card.Title className="d-flex">
+              <Image
+                src="/Free-return.png"
+                alt={"Free-return"}
+                width={120}
+                height={100}
+              />
               <h2>Free Returns on Eligible Items</h2>
             </Card.Title>
             <Card.Text>
@@ -38,7 +51,13 @@ export default function Highlights() {
       <Col xs={12} md={4}>
         <Card className="cardHighlight p-3 bg-dark text-white">
           <Card.Body>
-            <Card.Title>
+            <Card.Title className="d-flex">
+              <Image
+                src="/Easy-exchange.png"
+                alt={"Easy-exchange"}
+                width={120}
+                height={100}
+              />
               <h2>Easy Exchange Process</h2>
             </Card.Title>
             <Card.Text>

@@ -1,5 +1,3 @@
-"use client";
-
 import { Container } from "react-bootstrap";
 import ProductCarousel from "@/components/ProductCarousel";
 import Highlights from "@/components/Highlights";

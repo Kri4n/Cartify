@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setToken } from "@/redux/authSlice";
 import axios from "axios";
-import { Notyf } from "notyf";
 
 export default function Login() {
   const dispatch = useDispatch<AppDispatch>();

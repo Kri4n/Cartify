@@ -1,53 +1,35 @@
-"use client";
-
-import { useState, useEffect, JSX } from "react";
 import { CardGroup } from "react-bootstrap";
 import PreviewProducts from "./PreviewProducts";
-import axios from "axios";
 
-export default function FeaturedProducts() {
-  const [previews, setPreviews] = useState<JSX.Element[]>([]);
+export default async function FeaturedProducts() {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/active`,
+    {
+      cache: "no-store", // ensures fresh data per request
+    }
+  );
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/active`)
-      .then((res) => {
-        const products = res.data;
-        const numbers: (string | number)[] = [];
-        const featured = [];
+  if (!res.ok) throw new Error("Failed to fetch products");
 
-        const generateRandomNums = () => {
-          let randomNum = Math.floor(Math.random() * products.length);
+  const products = await res.json();
 
-          if (numbers.indexOf(randomNum) === -1) {
-            numbers.push(randomNum);
-          } else {
-            generateRandomNums();
-          }
-        };
+  // Randomize and pick 5 unique products
+  const randomIndexes: number[] = [];
+  while (randomIndexes.length < 5 && randomIndexes.length < products.length) {
+    const rand = Math.floor(Math.random() * products.length);
+    if (!randomIndexes.includes(rand)) randomIndexes.push(rand);
+  }
 
-        for (let i = 0; i < 5; i++) {
-          generateRandomNums();
-
-          featured.push(
-            <PreviewProducts
-              data={products[numbers[i]]}
-              key={products[numbers[i]]._id}
-            />
-          );
-        }
-        setPreviews(featured);
-      });
-  }, []);
+  const featured = randomIndexes.map((i) => products[i]);
 
   return (
-    <>
-      <div className="bg-light rounded mt-3 p-5 border shadow">
-        <h4 className="text-center">Featured Products</h4>
-        <CardGroup className="justify-content-center gap-1 mt-4">
-          {previews}
-        </CardGroup>
-      </div>
-    </>
+    <div className="bg-light rounded mt-3 p-5 border shadow">
+      <h4 className="text-center">Featured Products</h4>
+      <CardGroup className="justify-content-center gap-1 mt-4">
+        {featured.map((product: any) => (
+          <PreviewProducts key={product._id} data={product} />
+        ))}
+      </CardGroup>
+    </div>
   );
 }
